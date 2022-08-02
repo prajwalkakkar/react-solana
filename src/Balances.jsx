@@ -34,6 +34,8 @@ function Balances() {
       // get usd balance
       connection
         .getParsedTokenAccountsByOwner(publicKey, {
+          // this new public key refers to USD coin address on solana-devnet.
+          // Please change it to mainnet's address before pushing to production.
           mint: new PublicKey("Gh9ZwEmdLJ8DscKNTkTqPbNwLNNBjuSzaG9Vp2KGtKJr"),
         })
         .then((res) => {
