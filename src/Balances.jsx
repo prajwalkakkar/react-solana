@@ -5,7 +5,9 @@ import React, { useMemo, useState } from "react";
 function Balances() {
   // React States
   const [solBal, setSolBal] = useState(0);
+  const [solAmt, setSolAmt] = useState(0);
   const [usdBal, setUsdBal] = useState(0);
+  const [usdAmt, setUsdAmt] = useState(0);
 
   // solana web3 connection
   const { connection } = useConnection();
@@ -40,21 +42,19 @@ function Balances() {
         })
         .then((res) => {
           if (res.value.length > 0) {
-            setUsdBal(
-              (
-                res.value[0].account.data.parsed.info.tokenAmount.uiAmount *
-                usdUSd
-              ).toFixed(2)
-            );
+            let amt =
+              res.value[0].account.data.parsed.info.tokenAmount.uiAmount;
+            setUsdAmt(amt);
+            setUsdBal((amt * usdUSd).toFixed(2));
           }
         });
 
       // get solana balance
-      connection
-        .getBalance(publicKey)
-        .then((res) =>
-          setSolBal(((res / LAMPORTS_PER_SOL) * solUsd).toFixed(2))
-        );
+      connection.getBalance(publicKey).then((res) => {
+        let amt = res / LAMPORTS_PER_SOL;
+        setSolAmt(amt);
+        setSolBal((amt * solUsd).toFixed(2));
+      });
     }
   }, [publicKey]);
 
@@ -63,8 +63,12 @@ function Balances() {
       <p>
         Address: {publicKey ? publicKey.toString() : "Please connect wallet"}
       </p>
-      <p> Solana Balance : {solBal}</p>
-      <p> USD Balance : {usdBal}</p>
+      <h3>Solana</h3>
+      <p> Amount : {solAmt}</p>
+      <p> Balance : {solBal}</p>
+      <h3>USD COIN</h3>
+      <p> Amount : {usdAmt}</p>
+      <p> Balance : {usdBal}</p>
     </div>
   );
 }
